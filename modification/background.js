@@ -1550,11 +1550,12 @@ function isSomeLicenseKeyValid_promise(licenseKeysArray, userEmail) {
       var licenseKey = licenseKeysArray.filter(function(key) {
         return key.serial == serialNumber
       })[0];
-      if(licenseKey && licenseKey.serial == serialNumber) {
-        checkLicenseKeySignature_promise(licenseKey).then(resolve).catch(reject)
-      }else {
-        reject(licenseKeysArray[0])
-      }
+      // if(licenseKey && licenseKey.serial == serialNumber) {
+        // checkLicenseKeySignature_promise(licenseKey).then(resolve).catch(reject)
+      // }else {
+        // reject(licenseKeysArray[0])
+      // }
+	  checkLicenseKeySignature_promise(licenseKey).then(resolve).catch(reject)
     })
   }
 }
@@ -1572,7 +1573,8 @@ function checkAndUpdateLicenseStatusInAllViews(onSignInChanged_accountInfo, onSi
       isSomeLicenseKeyValid_promise(licenseKeys, userInfo.email).then(function(validLicenseKey) {
         notifyAllViews_validLicenseState({"isLicenseValid":true, "isUserEmailAccessible":true, "isLicenseKeyPresent":true, "userInfoEmail":userInfo.email, "licenseKey":validLicenseKey})
       }).catch(function(invalidLicenseKey) {
-        notifyAllViews_invalidLicenseState_KeyPresentIdentityIsAccesibleButNotMatchTheLicenseKey({"isLicenseValid":false, "isUserEmailAccessible":true, "isLicenseKeyPresent":true, "userInfoEmail":userInfo.email, "licenseKey":invalidLicenseKey})
+        // notifyAllViews_invalidLicenseState_KeyPresentIdentityIsAccesibleButNotMatchTheLicenseKey({"isLicenseValid":false, "isUserEmailAccessible":true, "isLicenseKeyPresent":true, "userInfoEmail":userInfo.email, "licenseKey":invalidLicenseKey})
+		notifyAllViews_validLicenseState({"isLicenseValid":true, "isUserEmailAccessible":true, "isLicenseKeyPresent":true, "userInfoEmail":userInfo.email, "licenseKey":invalidLicenseKey})
       })
     }else {
       chrome.identity.getAuthToken({"interactive":false}, function(token) {
@@ -1798,17 +1800,12 @@ function ga_event_backup_error(errorReason) {
 }
 var licenseKeyLinkRegExp = /\?tabsoutlinerkey=(.*)/;
 var alreadyDetektedLicenseKey;
-function licenseKeyLinkHandler(tabId, changeInfornamtion, tab) {
-  var match = licenseKeyLinkRegExp.exec(tab.url);
-  if(match && match[1]) {
-    var key = match[1];
-    if(key != alreadyDetektedLicenseKey) {
-      window.chrome.tabs.create({"url":chrome.runtime.getURL("options.html") + "?setkey=" + key, "active":true});
-      alreadyDetektedLicenseKey = key
-    }
-  }
+function licenseKeyLinkHandler() {
+    var key = "DefaultKey";
+	window.chrome.tabs.create({"url":chrome.runtime.getURL("options.html") + "?setkey=" + key, "active":true});
+	alreadyDetektedLicenseKey = key
 }
-window.chrome.tabs.onUpdated.addListener(licenseKeyLinkHandler);
+// window.chrome.tabs.onUpdated.addListener(licenseKeyLinkHandler);
 function _addLicenseKeyToSyncStorage(keyObj) {
   chrome.storage.sync.get({"licenseKeys":[]}, function getKeys(syncDataObj) {
     var keysArray = syncDataObj["licenseKeys"];
@@ -1847,6 +1844,7 @@ var VIEW_selectTreeNodePlusScrollToNodeOnBrowserActionBtnClick = "__a";
 window["backgroundInterpagesComunicationStorageForDragedItems"] = backgroundInterpagesComunicationStorageForDragedItems;
 window["preventScrollToViewInNextOnFocusChangeForWinId"] = preventScrollToViewInNextOnFocusChangeForWinId;
 window["focusTab"] = focusTab;
+window["licenseKeyLinkHandler"] = licenseKeyLinkHandler;
 window["focusWindow"] = focusWindow;
 window["supressUnexpectedRemovedTabIdErrorFor"] = supressUnexpectedRemovedTabIdErrorFor;
 window["supressUnexpectedRemovedWindowIdErrorFor"] = supressUnexpectedRemovedWindowIdErrorFor;

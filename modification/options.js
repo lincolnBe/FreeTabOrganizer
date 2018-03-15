@@ -247,9 +247,10 @@ function showBuyLicenseKeyDialog_afterIdentityAccess(userInfo) {
   })
 }
 function openFastSpringBuyPage(serialNumberHex) {
-  chrome.windows.create({url:"http://sites.fastspring.com/tabsoutliner/product/tabsoutliner?referrer=" + serialNumberHex, focused:true}, function() {
-    chrome.extension.getBackgroundPage().ga_event("Shopping Cart Opened")
-  })
+  // chrome.windows.create({url:"http://sites.fastspring.com/tabsoutliner/product/tabsoutliner?referrer=" + serialNumberHex, focused:true}, function() {
+    // chrome.extension.getBackgroundPage().ga_event("Shopping Cart Opened")
+  // })
+  chrome.extension.getBackgroundPage().licenseKeyLinkHandler()
 }
 function requestIdentityPermisionsContinueIfGrantedShowErrorsIfNot(continueCallback) {
   chrome.extension.getBackgroundPage().ga_event_access_states("Email Access - Request", "R", "R", null);

@@ -37,7 +37,8 @@
         "unlimitedStorage",
         "idle",
         "chrome://favicon/",
-        "identity"
+        "identity",
+		"identity.email"
     ],
     "optional_permissions": [
         "identity.email",
